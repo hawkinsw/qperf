@@ -9,10 +9,12 @@ import (
 )
 
 type Result struct {
-	Time     time.Time
-	Duration time.Duration
-	Bytes    uint64
-	Source   string
+	Time             time.Time
+	UploadDuration   time.Duration
+	DownloadDuration time.Duration
+	UploadBytes      uint64
+	DownloadBytes    uint64
+	Source           string
 }
 
 type ResultWriter interface {
@@ -31,10 +33,12 @@ func NewCSVResultWriter(filename string) (CSVResultWriter, error) {
 }
 
 func (f *CSVResultWriter) Write(result *Result) {
-	duration := fmt.Sprintf("%s", result.Duration)
-	bytes := fmt.Sprintf("%d", result.Bytes)
+	uploadDuration := fmt.Sprintf("%s", result.UploadDuration)
+	downloadDuration := fmt.Sprintf("%s", result.DownloadDuration)
+	downloadBytes := fmt.Sprintf("%d", result.DownloadBytes)
+	uploadBytes := fmt.Sprintf("%d", result.UploadBytes)
 	time := fmt.Sprintf("%s", result.Time.Format(time.UnixDate))
-	output := time + ", " + duration + ", " + result.Source + ", " + bytes + "\n"
+	output := time + ", " + downloadDuration + ", " + downloadBytes + ", " + uploadDuration + ", " + uploadBytes + ", " + result.Source + "\n"
 
 	f.lock.Lock()
 	f.output.Write([]byte(output))
